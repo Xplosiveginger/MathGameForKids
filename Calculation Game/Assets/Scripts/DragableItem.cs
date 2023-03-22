@@ -7,7 +7,10 @@ using UnityEngine.UI;
 public class DragableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     public Transform previousParent;
+    public Transform newParent;
+
     [HideInInspector] public int value;
+
     Text valueTextBox;
     Vector3 startPosition;
 
@@ -17,11 +20,16 @@ public class DragableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         startPosition = transform.position;
     }
 
+    public void ResetPositions()
+    {
+        transform.position = startPosition;
+    }
+
     public void SetValueTextBox(int value)
     {
-        if(valueTextBox)
+        this.value = value;
+        if (valueTextBox)
         {
-            this.value = value;
             valueTextBox.text = value.ToString();
         }
     }
@@ -41,13 +49,13 @@ public class DragableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
     public void OnDrag(PointerEventData eventData)
     {
         transform.position = Input.mousePosition;
-        transform.parent = transform.root;
+        transform.SetParent(newParent);
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
         Debug.Log("Ending of Drag");
-        transform.parent = previousParent;
+        transform.SetParent(previousParent);
         GetComponent<Image>().raycastTarget = true;
     }
 }

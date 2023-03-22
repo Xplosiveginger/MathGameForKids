@@ -1178,6 +1178,7 @@ MonoBehaviour:
   - {fileID: 1599909416}
   - {fileID: 2097558193}
   bottomBarPar: {fileID: 1098217533}
+  operatorText: {fileID: 2027035318}
   mainMenu: {fileID: 691396964}
   gamePlayScreen: {fileID: 359158667}
   levelWinScreen: {fileID: 1988386362}
@@ -2963,6 +2964,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   previousParent: {fileID: 0}
+  newParent: {fileID: 0}
   value: 0
 --- !u!1 &1599909416
 GameObject:
@@ -3055,6 +3057,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   previousParent: {fileID: 0}
+  newParent: {fileID: 0}
   value: 0
 --- !u!1 &1688110310
 GameObject:
@@ -4298,6 +4301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   previousParent: {fileID: 0}
+  newParent: {fileID: 0}
   value: 0
 --- !u!1 &2142403062
 GameObject:

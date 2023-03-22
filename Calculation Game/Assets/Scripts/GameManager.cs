@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject[] bottomBarObjs = new GameObject[3];
 
     [SerializeField] Transform bottomBarPar;
+    [SerializeField] Text operatorText;
 
     [SerializeField]
     GameObject mainMenu, gamePlayScreen, levelWinScreen, levelFailScreen;
@@ -36,7 +38,8 @@ public class GameManager : MonoBehaviour
 
     public void CheckForLevelComplete()
     {
-        if(bottomBarPar.childCount >= 1)
+        Debug.Log(bottomBarPar.childCount);
+        if(bottomBarPar.childCount != 0)
         {
             return;
         }
@@ -51,21 +54,116 @@ public class GameManager : MonoBehaviour
                         levelWinScreen.SetActive(true);
                     } 
                 }
+                else
+                {
+                    CheckForLevelFail();
+                }
                 break;
             case GameplayState.SUBTRACTION:
+                if (finalResult == result)
+                {
+                    if (value1 > value2)
+                    {
+                        if ((finalV1 == value1 && finalV2 == value2))
+                        {
+                            levelWinScreen.SetActive(true);
+                        } 
+                    }
+                    else
+                    {
+                        if ((finalV1 == value2 && finalV2 == value1))
+                        {
+                            levelWinScreen.SetActive(true);
+                        }
+                    }
+                }
+                else
+                {
+                    CheckForLevelFail();
+                }
                 break;
             case GameplayState.MULTIPLICATION:
+                if (finalResult == result)
+                {
+                    if ((finalV1 == value1 && finalV2 == value2) || (finalV1 == value2 && finalV2 == value1))
+                    {
+                        levelWinScreen.SetActive(true);
+                    }
+                }
+                else
+                {
+                    CheckForLevelFail();
+                }
                 break;
             case GameplayState.DIVISION:
+                if (finalResult == result)
+                {
+                    if (value1 > value2)
+                    {
+                        if ((finalV1 == value1 && finalV2 == value2))
+                        {
+                            levelWinScreen.SetActive(true);
+                        } 
+                    }
+                    else
+                    {
+                        if ((finalV1 == value2 && finalV2 == value1))
+                        {
+                            levelWinScreen.SetActive(true);
+                        }
+                    }
+                }
+                else
+                {
+                    CheckForLevelFail();
+                }
                 break;
         }
     }
 
-    
+    public void GoToNextLevel()
+    {
+        PlayerPrefs.SetInt("CURR_LEVELS_PLAYED", GetCurrLevelsPlayed() + 1);
+        levelFailScreen.SetActive(false);
+        levelWinScreen.SetActive(false);
+        gamePlayScreen.SetActive(false);
+        mainMenu.SetActive(true);
+        setPrevPosOfDraggables();
+    }
+
+    public void RestartLevel()
+    {
+        levelFailScreen.SetActive(false);
+        levelWinScreen.SetActive(false);
+        gamePlayScreen.SetActive(true);
+        setPrevPosOfDraggables();
+    }
+
+    public void MainMenu()
+    {
+        levelFailScreen.SetActive(false);
+        levelWinScreen.SetActive(false);
+        gamePlayScreen.SetActive(false);
+        mainMenu.SetActive(true);
+        setPrevPosOfDraggables();
+    }
+
+    void setPrevPosOfDraggables()
+    {
+        for (int i = 0; i < bottomBarObjs.Length; i++)
+        {
+            bottomBarObjs[i].GetComponent<DragableItem>().ResetPositions();
+        }
+    }
 
     public void CheckForLevelFail()
     {
+        if (bottomBarPar.childCount != 0)
+        {
+            return;
+        }
 
+        levelFailScreen.SetActive(true);
     }
 
     void GenerateRandomValues()
@@ -92,9 +190,42 @@ public class GameManager : MonoBehaviour
                 break;
         }
 
-        result = value1 + value2;
-        Debug.Log("Value 1: " + value1 + "\tValue 2 : " + value2 + "\tRes = " + result);
+        CalculateResult();
     }
+
+    void CalculateResult()
+    {
+        switch (currGameplayState)
+        {
+            case GameplayState.ADDITION:
+                result = value1 + value2;
+                break;
+            case GameplayState.SUBTRACTION:
+                if (value1 > value2)
+                {
+                    result = value1 - value2;
+                }
+                else
+                {
+                    result = value2 - value1;
+                }
+                break;
+            case GameplayState.MULTIPLICATION:
+                result = value1 * value2;
+                break;
+            case GameplayState.DIVISION:
+                if (value2 != 0)
+                {
+                    result = value1 / value2;
+                }
+                else
+                {
+                    result = value2 / value1;
+                }
+                break;
+        }
+    }
+
 
     void SetValuesToUIElements()
     {
@@ -110,6 +241,7 @@ public class GameManager : MonoBehaviour
             bottomBarObjs[0].GetComponent<DragableItem>().SetValueTextBox(value2);
             bottomBarObjs[1].GetComponent<DragableItem>().SetValueTextBox(result);
         }
+        operatorText.text = currOperator;
     }
 
     void SetTheCurrentArithematicOperator()
